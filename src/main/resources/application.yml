@@ -10,6 +10,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/task
   kafka:
     bootstrap-servers: 192.168.0.203:9092
     consumer:
