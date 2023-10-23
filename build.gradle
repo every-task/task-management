@@ -21,6 +21,16 @@ repositories {
 }
 
 dependencies {
+    //chatGPT 직접 적어줘야 한다
+    implementation 'com.theokanning.openai-gpt3-java:service:0.12.0'
+    implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
