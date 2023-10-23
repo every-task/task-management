@@ -1,6 +1,6 @@
-package com.playdata.client.response;
+package com.playdata.client.story.response;
 
-import com.playdata.client.dto.TaskDto;
+import com.playdata.client.story.dto.TaskDto;
 
 import java.util.List;
 
