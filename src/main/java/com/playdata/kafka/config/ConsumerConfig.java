@@ -1,4 +1,4 @@
-package com.playdata.kafka;
+package com.playdata.kafka.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -2,6 +2,7 @@ package com.playdata.domain.task.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,4 +20,19 @@ public class TaskInformation {
 
     @Enumerated(EnumType.STRING)
     private Period period;
+
+    public static TaskInformation createTask(UUID id, String content, Period period){
+        return TaskInformation.builder()
+                .id(id)
+                .period(period)
+                .content(content)
+                .build();
+    }
+
+    @Builder
+    public TaskInformation(UUID id, String content, Period period) {
+        this.id = id;
+        this.content = content;
+        this.period = period;
+    }
 }
