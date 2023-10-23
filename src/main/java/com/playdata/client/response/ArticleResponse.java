@@ -6,6 +6,7 @@ import java.util.List;
 
 public record ArticleResponse(
         Long id,
+        String content,
         List<TaskDto> tasks
 ) {
 }
