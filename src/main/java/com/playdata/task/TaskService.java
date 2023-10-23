@@ -1,7 +1,10 @@
 package com.playdata.task;
 
 import com.playdata.client.api.SuccessStoryClient;
+import com.playdata.client.chatgpt.ChatCptService;
 import com.playdata.client.response.ArticleResponse;
+import com.playdata.domain.articleindex.entity.ArticleIndex;
+import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
 import com.playdata.domain.task.entity.TaskInformation;
 import com.playdata.domain.task.repository.TaskInformationRepository;
 import com.playdata.kafka.dto.ArticleKafkaData;
@@ -9,13 +12,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TaskService {
 
     private final TaskInformationRepository taskInformationRepository;
+    private final ArticleIndexRepository articleIndexRepository;
+
     private final SuccessStoryClient successStoryClient;
+    private final ChatCptService chatCptService;
 
     public void taskRegister(ArticleKafkaData data){
         ArticleResponse articleResponse = successStoryClient.getById(data.id());
@@ -27,6 +37,28 @@ public class TaskService {
                         task.period()))
                 .toList();
 
+        Set<UUID> taskIds = taskInformations.stream()
+                .map(TaskInformation::getId)
+                .collect(Collectors.toSet());
+
+        List<String> words = chatCptService.parseContent(articleResponse.content());
+
+        words.forEach(word->{
+            upsertTasks(word, taskIds);
+        });
+
         taskInformationRepository.saveAll(taskInformations);
+    }
+
+    public void upsertTasks(String word, Set<UUID> taskIds) {
+        Optional<ArticleIndex> articleIndex = articleIndexRepository.findById(word);
+
+        if(articleIndex.isEmpty()){
+            articleIndexRepository.save(ArticleIndex.createArticleIndex(word, taskIds));
+        } else {
+            ArticleIndex findArticleIndex = articleIndex.get();
+            findArticleIndex.getTasks().addAll(taskIds);
+            articleIndexRepository.save(findArticleIndex);
+        }
     }
 }
