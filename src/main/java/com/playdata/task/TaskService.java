@@ -1,8 +1,8 @@
 package com.playdata.task;
 
-import com.playdata.client.story.service.SuccessStoryClient;
-import com.playdata.client.chatgpt.ChatCptService;
+import com.playdata.client.chatgpt.service.ChatGptService;
 import com.playdata.client.story.response.ArticleResponse;
+import com.playdata.client.story.service.SuccessStoryClient;
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
 import com.playdata.domain.task.entity.TaskInformation;
@@ -25,7 +25,7 @@ public class TaskService {
     private final ArticleIndexRepository articleIndexRepository;
 
     private final SuccessStoryClient successStoryClient;
-    private final ChatCptService chatCptService;
+    private final ChatGptService chatGptService;
 
     public void taskRegister(ArticleKafkaData data){
         ArticleResponse articleResponse = successStoryClient.getById(data.id());
@@ -41,7 +41,7 @@ public class TaskService {
                 .map(TaskInformation::getId)
                 .collect(Collectors.toSet());
 
-        List<String> words = chatCptService.parseContent(articleResponse.content());
+        List<String> words = chatGptService.parseContent(articleResponse.content());
 
         words.forEach(word->{
             upsertTasks(word, taskIds);
