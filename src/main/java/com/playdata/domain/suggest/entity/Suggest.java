@@ -3,6 +3,7 @@ package com.playdata.domain.suggest.entity;
 import com.playdata.domain.task.entity.TaskInformation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,4 +20,17 @@ public class Suggest {
 
     @ManyToOne
     private TaskInformation taskInformation;
+
+    public static Suggest createSuggest(Long questionId, TaskInformation taskInformation){
+        return Suggest.builder()
+                .questionId(questionId)
+                .taskInformation(taskInformation)
+                .build();
+    }
+
+    @Builder
+    public Suggest(Long questionId, TaskInformation taskInformation) {
+        this.questionId = questionId;
+        this.taskInformation = taskInformation;
+    }
 }
