@@ -28,9 +28,8 @@ public class TaskService {
     private final ChatGptService chatGptService;
 
     public void taskRegister(ArticleKafkaData data){
-        ArticleResponse articleResponse = successStoryClient.getById(data.id());
 
-        List<TaskInformation> taskInformations = articleResponse.tasks().stream()
+        List<TaskInformation> taskInformations = data.tasks().stream()
                 .map(task -> TaskInformation.createTask(
                         task.id(),
                         task.content(),
@@ -41,7 +40,7 @@ public class TaskService {
                 .map(TaskInformation::getId)
                 .collect(Collectors.toSet());
 
-        List<String> words = chatGptService.parseContent(articleResponse.content());
+        List<String> words = chatGptService.parseContent(data.content());
 
         words.forEach(word->{
             upsertTasks(word, taskIds);
