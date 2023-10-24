@@ -21,6 +21,12 @@ public class TaskInformation {
     @Enumerated(EnumType.STRING)
     private Period period;
 
+    public static TaskInformation fromId(UUID id){
+        return TaskInformation.builder()
+                .id(id)
+                .build();
+    }
+
     public static TaskInformation createTask(UUID id, String content, Period period){
         return TaskInformation.builder()
                 .id(id)
