@@ -1,6 +1,6 @@
-package com.playdata.client.api;
+package com.playdata.client.story.service;
 
-import com.playdata.client.response.ArticleResponse;
+import com.playdata.client.story.response.ArticleResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 

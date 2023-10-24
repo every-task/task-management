@@ -1,4 +1,4 @@
-package com.playdata.gptparsing.dto.request;
+package com.playdata.client.chatgpt.request;
 
 import com.theokanning.openai.completion.CompletionRequest;
 import lombok.AllArgsConstructor;
@@ -10,18 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GptCompletionRequest {
 
-    private String model;
-
     private String prompt;
-
+    private String model;
     private Integer maxToken;
 
-
-    public static CompletionRequest of(GptCompletionRequest restRequest) {
+    public static CompletionRequest fromPrompt(String prompt){
         return CompletionRequest.builder()
-                .model(restRequest.getModel())
-                .prompt(restRequest.getPrompt())
-                .maxTokens(restRequest.getMaxToken())
+                .prompt(prompt)
+                .model("text-davinci-003")
+                .prompt(prompt)
+                .maxTokens(1000)
                 .build();
     }
 }

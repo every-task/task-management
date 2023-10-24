@@ -1,4 +1,4 @@
-package com.playdata.gptparsing.dto.response;
+package com.playdata.client.chatgpt.response;
 
 import com.theokanning.openai.completion.CompletionChoice;
 import com.theokanning.openai.completion.CompletionResult;
