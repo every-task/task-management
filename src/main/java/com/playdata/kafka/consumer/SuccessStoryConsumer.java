@@ -13,7 +13,7 @@ public class SuccessStoryConsumer {
 
     private final TaskService taskService;
 
-    @KafkaListener(topics = TopicConfig.SUCCESS_STORY)
+    @KafkaListener(topics = TopicConfig.STORY)
     public void listen(ArticleKafkaData data){
         taskService.taskRegister(data);
     }
