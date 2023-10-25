@@ -19,16 +19,13 @@ import java.util.stream.Collectors;
 public class SuggestService {
 
     private final ChatGptService chatGptService;
-    private final QuestionClient questionClient;
     private final ArticleIndexRepository articleIndexRepository;
     private final SuggestRepository suggestRepository;
 
     private final int SUGGEST_TASK_COUNT = 5;
 
-    public void taskSuggest(Long questionId){
-        QuestionResponse questionResponse = questionClient.getById(questionId);
-
-        List<String> words = chatGptService.parseContent(questionResponse.content());
+    public void taskSuggest(Long questionId, String content){
+        List<String> words = chatGptService.parseContent(content);
 
         List<ArticleIndex> articleIndices = articleIndexRepository.findByWordIn(words);
 
