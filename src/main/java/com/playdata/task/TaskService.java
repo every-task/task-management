@@ -10,6 +10,7 @@ import com.playdata.domain.task.repository.TaskInformationRepository;
 import com.playdata.kafka.dto.ArticleKafkaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TaskService {
 
     private final TaskInformationRepository taskInformationRepository;
     private final ArticleIndexRepository articleIndexRepository;
-
-    private final SuccessStoryClient successStoryClient;
     private final ChatGptService chatGptService;
 
     public void taskRegister(ArticleKafkaData data){
