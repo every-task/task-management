@@ -12,7 +12,6 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
@@ -72,10 +71,10 @@ class TaskServiceTest {
         when(chatGptService.parseContent(anyString()))
                 .thenReturn(anyList());
 
-        //then
+        //when
         taskService.taskRegister(articleKafkaData);
 
-        //when
+        //then
         List<TaskInformation> taskInformations = taskInformationRepository.findAll();
 
         assertThat(taskInformations).hasSize(2)
@@ -102,10 +101,10 @@ class TaskServiceTest {
         when(chatGptService.parseContent(anyString()))
                 .thenReturn(List.of("건강", "삶", "법"));
 
-        //then
+        //when
         taskService.taskRegister(articleKafkaData);
 
-        //when
+        //then
         List<ArticleIndex> articleIndices = articleIndexRepository.findAll();
         assertThat(articleIndices).hasSize(3);
 
@@ -140,10 +139,10 @@ class TaskServiceTest {
         when(chatGptService.parseContent(anyString()))
                 .thenReturn(List.of("건강", "삶", "법"));
 
-        //then
+        //when
         taskService.taskRegister(articleKafkaData);
 
-        //when
+        //then
         ArticleIndex index1 = articleIndexRepository.findById("건강").get();
         assertThat(index1.getTasks()).hasSize(4);
 
