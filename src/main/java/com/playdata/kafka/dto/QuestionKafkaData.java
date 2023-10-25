@@ -1,4 +1,4 @@
 package com.playdata.kafka.dto;
 
-public record QuestionKafkaData(Long id) {
+public record QuestionKafkaData(Long id, String title, String content) {
 }
