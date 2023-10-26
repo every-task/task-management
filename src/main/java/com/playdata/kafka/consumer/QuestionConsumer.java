@@ -2,7 +2,7 @@ package com.playdata.kafka.consumer;
 
 import com.playdata.kafka.config.TopicConfig;
 import com.playdata.kafka.dto.QuestionKafkaData;
-import com.playdata.suggest.SuggestService;
+import com.playdata.suggest.service.SuggestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
