@@ -5,6 +5,7 @@ import com.playdata.client.chatgpt.service.ChatGptService;
 import com.playdata.domain.suggest.entity.Suggest;
 import com.playdata.domain.suggest.repository.SuggestRepository;
 import com.playdata.domain.task.entity.TaskInformation;
+import com.playdata.domain.task.response.TaskResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class SuggestService {
     private final SuggestRepository suggestRepository;
     private final ArticleIndexService articleIndexService;
 
-    private final int SUGGEST_TASK_COUNT = 5;
+    private  final static int SUGGEST_TASK_COUNT = 5;
 
     public void taskSuggest(Long questionId, String content){
         List<String> words = chatGptService.parseContent(content);
@@ -31,5 +32,12 @@ public class SuggestService {
                 .toList();
 
         suggestRepository.saveAll(suggests);
+    }
+
+    public List<TaskResponse> getByQuestionId(Long id) {
+        return suggestRepository.findByQuestionId(id).stream()
+                .map(Suggest::getTaskInformation)
+                .map(TaskResponse::fromEntity)
+                .toList();
     }
 }
