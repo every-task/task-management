@@ -31,14 +31,16 @@ public class ChatGptServiceImpl implements ChatGptService {
         return response.getMessages().stream()
                 .map(GptCompletionResponse.Message::getText)
                 .findFirst()
-                .orElseThrow(()->new RuntimeException("커스텀 예외로 바꿔야 함"));
+                // TODO : 커스텀 예외로 바꿔야 함
+                .orElseThrow(()->new RuntimeException("ChatGptCompletionException"));
     }
 
     private List<String> extractWordsFromResponse(String response) {
         try {
             return objectMapper.readValue(response, List.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("커스텀 예외로 바꿔야 함");
+            // TODO : 커스텀 예외로 바꿔야 함
+            throw new RuntimeException("CompletionResponseParseException", e);
         }
     }
 }
