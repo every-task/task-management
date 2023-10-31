@@ -9,9 +9,9 @@ import org.springframework.kafka.config.TopicBuilder;
 public class TopicConfig {
 
     public static final String STORY = "story";
-    public static final String STORY_INDEX_FAIL = "story_index_fail";
+    public static final String STORY_INDEX_FAIL = "story-index-fail";
     public static final String QUESTION = "question";
-    public static final String QUESTION_INDEX_FAIL = "question_index_fail";
+    public static final String QUESTION_INDEX_FAIL = "question-index-fail";
 
     // local 개발용 토픽, 운영환경은 task service 에서 토픽 생성 X
     @Bean
