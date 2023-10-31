@@ -8,6 +8,8 @@ import com.playdata.client.chatgpt.response.GptCompletionResponse;
 import com.theokanning.openai.completion.CompletionResult;
 import com.theokanning.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,12 +21,13 @@ public class ChatGptServiceImpl implements ChatGptService {
     private final ObjectMapper objectMapper;
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public List<String> parseContent(String content) {
         String completion = completion(content).trim();
         return extractWordsFromResponse(completion);
     }
 
-    public String completion(String prompt) {
+    private String completion(String prompt) {
         CompletionResult result = openAiService.createCompletion(GptCompletion.fromPrompt(prompt));
         GptCompletionResponse response = GptCompletionResponse.of(result);
 
