@@ -1,8 +1,6 @@
-package com.playdata.task;
+package com.playdata.task.service;
 
 import com.playdata.client.chatgpt.service.ChatGptService;
-import com.playdata.client.story.response.ArticleResponse;
-import com.playdata.client.story.service.SuccessStoryClient;
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
 import com.playdata.domain.task.entity.TaskInformation;
