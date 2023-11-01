@@ -34,7 +34,6 @@ public class TaskService {
     @Async
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskRegister(ArticleKafkaData data){
-
         List<TaskInformation> taskInformations = data.tasks().stream()
                 .map(task -> TaskInformation.createTask(
                         task.id(),

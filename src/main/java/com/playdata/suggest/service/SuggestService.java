@@ -6,7 +6,12 @@ import com.playdata.domain.suggest.entity.Suggest;
 import com.playdata.domain.suggest.repository.SuggestRepository;
 import com.playdata.domain.task.entity.TaskInformation;
 import com.playdata.domain.task.response.TaskResponse;
+import com.playdata.kafka.producer.QuestionProducer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +24,12 @@ public class SuggestService {
     private final ChatGptService chatGptService;
     private final SuggestRepository suggestRepository;
     private final ArticleIndexService articleIndexService;
+    private final QuestionProducer questionProducer;
 
     private  final static int SUGGEST_TASK_COUNT = 5;
 
+    @Async
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskSuggest(Long questionId, String content){
         List<String> words = chatGptService.parseContent(content);
 
@@ -32,6 +40,11 @@ public class SuggestService {
                 .toList();
 
         suggestRepository.saveAll(suggests);
+    }
+
+    @Recover
+    public void recover(RuntimeException e, Long questionId, String content){
+        questionProducer.send(questionId);
     }
 
     public List<TaskResponse> getByQuestionId(Long id) {
