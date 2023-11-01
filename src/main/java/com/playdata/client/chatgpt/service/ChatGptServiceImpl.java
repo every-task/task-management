@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playdata.client.chatgpt.config.GptCompletion;
 import com.playdata.client.chatgpt.response.GptCompletionResponse;
-import com.theokanning.openai.completion.CompletionResult;
+import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,11 +25,11 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
     public String completion(String prompt) {
-        CompletionResult result = openAiService.createCompletion(GptCompletion.fromPrompt(prompt));
+        ChatCompletionResult result = openAiService.createChatCompletion(GptCompletion.fromPrompt(prompt));
         GptCompletionResponse response = GptCompletionResponse.of(result);
 
         return response.getMessages().stream()
-                .map(GptCompletionResponse.Message::getText)
+                .map(GptCompletionResponse.Message::getMessage)
                 .findFirst()
                 // TODO : 커스텀 예외로 바꿔야 함
                 .orElseThrow(()->new RuntimeException("ChatGptCompletionException"));
