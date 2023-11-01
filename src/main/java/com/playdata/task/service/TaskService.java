@@ -8,6 +8,9 @@ import com.playdata.domain.task.repository.TaskInformationRepository;
 import com.playdata.kafka.dto.ArticleKafkaData;
 import com.playdata.kafka.producer.StoryProducer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,7 @@ public class TaskService {
     private final StoryProducer storyProducer;
 
     @Async
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskRegister(ArticleKafkaData data){
 
         List<TaskInformation> taskInformations = data.tasks().stream()
@@ -42,18 +46,18 @@ public class TaskService {
                 .map(TaskInformation::getId)
                 .collect(Collectors.toSet());
 
-        try {
-            List<String> words = chatGptService.parseContent(data.content());
+        List<String> words = chatGptService.parseContent(data.content());
 
-            words.forEach(word->{
-                upsertTasks(word, taskIds);
-            });
+        words.forEach(word->{
+            upsertTasks(word, taskIds);
+        });
 
-            taskInformationRepository.saveAll(taskInformations);
-        } catch (RuntimeException e){
-            // TODO : parseContent 예외를 커스텀 예외로 바꾼다면, fit 하게 처리하기
-            storyProducer.send(data.id());
-        }
+        taskInformationRepository.saveAll(taskInformations);
+    }
+
+    @Recover
+    public void recover(RuntimeException e, ArticleKafkaData data){
+        storyProducer.send(data.id());
     }
 
     public void upsertTasks(String word, Set<UUID> taskIds) {
