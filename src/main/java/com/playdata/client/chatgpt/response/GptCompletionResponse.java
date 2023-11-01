@@ -1,7 +1,8 @@
 package com.playdata.client.chatgpt.response;
 
-import com.theokanning.openai.completion.CompletionChoice;
-import com.theokanning.openai.completion.CompletionResult;
+import com.theokanning.openai.completion.chat.ChatCompletionChoice;
+import com.theokanning.openai.completion.chat.ChatCompletionResult;
+import com.theokanning.openai.completion.chat.ChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,17 +34,14 @@ public class GptCompletionResponse {
         @AllArgsConstructor
         public static class Message {
 
-            private String text;
+            private String role;
 
-            private Integer index;
+            private String message;
 
-            private String finishReason;
-
-            public static Message of(CompletionChoice choice) {
+            public static Message of(ChatMessage chatMessage) {
                 return new Message(
-                        choice.getText(),
-                        choice.getIndex(),
-                        choice.getFinish_reason()
+                        chatMessage.getRole(),
+                        chatMessage.getContent()
                 );
             }
         }
@@ -68,13 +66,13 @@ public class GptCompletionResponse {
             }
         }
 
-        public static List<Message> toResponseListBy(List<CompletionChoice> choices) {
+        public static List<GptCompletionResponse.Message> toResponseListBy(List<ChatCompletionChoice> choices) {
             return choices.stream()
-                    .map(Message::of)
+                    .map(completionChoice -> Message.of(completionChoice.getMessage()))
                     .collect(Collectors.toList());
         }
 
-        public static GptCompletionResponse of(CompletionResult result) {
+        public static GptCompletionResponse of(ChatCompletionResult result) {
             return new GptCompletionResponse(
                     result.getId(),
                     result.getObject(),

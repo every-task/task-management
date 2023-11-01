@@ -1,20 +1,28 @@
 package com.playdata.client.chatgpt.config;
 
-import com.theokanning.openai.completion.CompletionRequest;
+import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.theokanning.openai.completion.chat.ChatMessage;
+
+import java.util.List;
 
 public class GptCompletion {
 
-    public static CompletionRequest fromPrompt(String prompt) {
-        return CompletionRequest.builder()
-                .prompt(REQUEST_SCRIPT + prompt)
+    public static ChatCompletionRequest fromPrompt(String prompt) {
+        return ChatCompletionRequest.builder()
+                .messages(convertChatMessage(prompt))
                 .maxTokens(MAX_TOKENS)
                 .model(MODEL)
                 .build();
     }
+    private static List<ChatMessage> convertChatMessage(String prompt) {
+        return List.of(new ChatMessage(ROLE, REQUEST_SCRIPT + prompt));
+    }
 
+    private static final String ROLE = "user";
     private static final int MAX_TOKENS = 1000;
-    private static final String MODEL = "text-davinci-003";
-    private static final String REQUEST_SCRIPT =
+    private static final String MODEL = "gpt-3.5-turbo";
+    private static final String REQUEST_SCRIPT = "너는 편집자야\n" +
+            "\n" +
             "너가 해야되는 일\n" +
             " \n" +
             "1. 내가 마지막에 요청하는 문장을 핵심만 요약한다.\n" +
