@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     //chatGPT 직접 적어줘야 한다
-    implementation 'com.theokanning.openai-gpt3-java:service:0.12.0'
+    implementation 'com.theokanning.openai-gpt3-java:service:0.16.1'
     implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
 
     // spring
