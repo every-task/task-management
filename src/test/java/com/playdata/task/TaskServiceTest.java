@@ -8,6 +8,7 @@ import com.playdata.domain.task.entity.TaskInformation;
 import com.playdata.domain.task.repository.TaskInformationRepository;
 import com.playdata.kafka.dto.ArticleKafkaData;
 import com.playdata.kafka.dto.TaskKafkaData;
+import com.playdata.task.service.TaskService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

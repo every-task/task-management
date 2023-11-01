@@ -14,8 +14,7 @@ public class GptCompletion {
 
     private static final int MAX_TOKENS = 1000;
     private static final String MODEL = "text-davinci-003";
-    private static final String REQUEST_SCRIPT = "너는 편집자야\n" +
-            "\n" +
+    private static final String REQUEST_SCRIPT =
             "너가 해야되는 일\n" +
             " \n" +
             "1. 내가 마지막에 요청하는 문장을 핵심만 요약한다.\n" +
@@ -33,7 +32,7 @@ public class GptCompletion {
             "\n" +
             "3. 동사는 절대 포함하지 않는다.\n" +
             "\n" +
-            "4. 응답에는 절대 다른 말은 절대 포함하지 않고 리스트로 만든 단어만 포함한다.\n" +
+            "응답에는 절대 다른 말은 절대 포함하지 않고 리스트로 만든 단어만 포함한다. 아래 문장에 대해서 수행해\n" +
             "\n" +
-            "요청하는 문장 : \n";
+            "\n";
 }
