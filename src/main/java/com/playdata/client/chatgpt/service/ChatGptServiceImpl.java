@@ -24,6 +24,7 @@ public class ChatGptServiceImpl implements ChatGptService {
         return extractWordsFromResponse(completion);
     }
 
+
     public String completion(String prompt) {
         ChatCompletionResult result = openAiService.createChatCompletion(GptCompletion.fromPrompt(prompt));
         GptCompletionResponse response = GptCompletionResponse.of(result);

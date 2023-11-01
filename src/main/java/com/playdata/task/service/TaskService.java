@@ -1,14 +1,17 @@
-package com.playdata.task;
+package com.playdata.task.service;
 
 import com.playdata.client.chatgpt.service.ChatGptService;
-import com.playdata.client.story.response.ArticleResponse;
-import com.playdata.client.story.service.SuccessStoryClient;
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
 import com.playdata.domain.task.entity.TaskInformation;
 import com.playdata.domain.task.repository.TaskInformationRepository;
 import com.playdata.kafka.dto.ArticleKafkaData;
+import com.playdata.kafka.producer.StoryProducer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +29,11 @@ public class TaskService {
     private final TaskInformationRepository taskInformationRepository;
     private final ArticleIndexRepository articleIndexRepository;
     private final ChatGptService chatGptService;
+    private final StoryProducer storyProducer;
 
+    @Async
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskRegister(ArticleKafkaData data){
-
         List<TaskInformation> taskInformations = data.tasks().stream()
                 .map(task -> TaskInformation.createTask(
                         task.id(),
@@ -47,6 +52,11 @@ public class TaskService {
         });
 
         taskInformationRepository.saveAll(taskInformations);
+    }
+
+    @Recover
+    public void recover(RuntimeException e, ArticleKafkaData data){
+        storyProducer.send(data.id());
     }
 
     public void upsertTasks(String word, Set<UUID> taskIds) {
