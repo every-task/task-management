@@ -12,6 +12,7 @@ public class TopicConfig {
     public static final String STORY_INDEX_FAIL = "story-index-fail";
     public static final String QUESTION = "question";
     public static final String QUESTION_INDEX_FAIL = "question-index-fail";
+    public static final String SUGGEST = "suggest";
 
     // local 개발용 토픽, 운영환경은 task service 에서 토픽 생성 X
     @Bean
@@ -45,6 +46,15 @@ public class TopicConfig {
     public NewTopic topicQuestionIndexFail(){
         return TopicBuilder
                 .name(QUESTION_INDEX_FAIL)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic topicSuggest(){
+        return TopicBuilder
+                .name(SUGGEST)
                 .partitions(1)
                 .replicas(1)
                 .build();
