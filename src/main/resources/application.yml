@@ -14,7 +14,7 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/task
   kafka:
-    bootstrap-servers: 192.168.0.203:9092
+    bootstrap-servers: localhost:9092
     consumer:
       auto-offset-reset: latest
       group-id: task
@@ -22,8 +22,8 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
       properties:
         spring.json.trusted.packages: "*"
-      producer:
-        key-serializer: org.apache.kafka.common.serialization.StringSerializer
-        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 
