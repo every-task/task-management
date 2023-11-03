@@ -2,11 +2,8 @@ package com.playdata.suggest.service;
 
 import com.playdata.articleindex.service.ArticleIndexService;
 import com.playdata.client.chatgpt.service.ChatGptService;
-import com.playdata.domain.suggest.entity.Suggest;
-import com.playdata.domain.suggest.repository.SuggestRepository;
-import com.playdata.domain.task.entity.TaskInformation;
-import com.playdata.domain.task.response.TaskResponse;
 import com.playdata.kafka.producer.QuestionProducer;
+import com.playdata.kafka.producer.SuggestProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -22,9 +19,9 @@ import java.util.UUID;
 public class SuggestService {
 
     private final ChatGptService chatGptService;
-    private final SuggestRepository suggestRepository;
     private final ArticleIndexService articleIndexService;
     private final QuestionProducer questionProducer;
+    private final SuggestProducer suggestProducer;
 
     private  final static int SUGGEST_TASK_COUNT = 5;
 
@@ -35,11 +32,7 @@ public class SuggestService {
 
         List<UUID> relatedTaskIds = articleIndexService.getRelatedTaskIds(words, SUGGEST_TASK_COUNT);
 
-        List<Suggest> suggests = relatedTaskIds.stream()
-                .map(taskId->Suggest.createSuggest(questionId, TaskInformation.fromId(taskId)))
-                .toList();
-
-        suggestRepository.saveAll(suggests);
+        suggestProducer.send(questionId, relatedTaskIds);
     }
 
     @Recover
@@ -47,10 +40,4 @@ public class SuggestService {
         questionProducer.send(questionId);
     }
 
-    public List<TaskResponse> getByQuestionId(Long id) {
-        return suggestRepository.findByQuestionId(id).stream()
-                .map(Suggest::getTaskInformation)
-                .map(TaskResponse::fromEntity)
-                .toList();
-    }
 }
