@@ -25,5 +25,6 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
+chatgpt:
+  api-key: ${{GPT_API_KEY}}
 
