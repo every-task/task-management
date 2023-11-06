@@ -1,22 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    password:
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/testdb
-de:
-  flapdoodle:
-    mongodb:
-      embedded:
-        version: 4.9.2
+  mongodb:
+    embedded:
+      version: 3.5.5
 chatgpt:
   api-key: aa-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

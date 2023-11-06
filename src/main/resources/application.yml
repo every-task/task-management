@@ -1,15 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/task?serverTimezone=Asia/Seoul
-    username: root
-    password: admin
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   data:
     mongodb:
       uri: mongodb://localhost:27017/task
@@ -25,5 +14,5 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-
+chatgpt:
+  api-key: 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

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +22,15 @@ public class ChatGptServiceImpl implements ChatGptService {
 
     @Override
     public List<String> parseContent(String content) {
-        String completion = completion(content).trim();
-        return extractWordsFromResponse(completion);
+        CompletableFuture<String> completion = CompletableFuture
+                .supplyAsync(() -> completion(content).trim());
+        try {
+            return extractWordsFromResponse(completion.get());
+        } catch (InterruptedException | ExecutionException e) {
+            // TODO : 예외처리 방식 변경
+            throw new RuntimeException("CompletableFuture", e);
+        }
     }
-
 
     public String completion(String prompt) {
         ChatCompletionResult result = openAiService.createChatCompletion(GptCompletion.fromPrompt(prompt));
