@@ -1,6 +1,7 @@
-spring:
-  mongodb:
-    embedded:
-      version: 4.9.2
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 5.0.5
 chatgpt:
   api-key: aa-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
