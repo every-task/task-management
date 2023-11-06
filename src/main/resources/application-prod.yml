@@ -1,15 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:mysql://10.128.0.12:3306/management?serverTimezone=Asia/Seoul
-    username: ity
-    password: 1234
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   data:
     mongodb:
       uri: mongodb://10.128.0.12:27017/task
