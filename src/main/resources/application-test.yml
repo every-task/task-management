@@ -1,6 +1,6 @@
 spring:
   mongodb:
     embedded:
-      version: 3.5.5
+      version: 4.9.2
 chatgpt:
   api-key: aa-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
