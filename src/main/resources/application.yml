@@ -15,4 +15,4 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 chatgpt:
-  api-key: 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
+  api-key: ss-sssssssssssssssssssssssssssssssssssssssss
