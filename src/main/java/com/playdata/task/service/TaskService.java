@@ -1,5 +1,6 @@
 package com.playdata.task.service;
 
+import com.playdata.client.chatgpt.exception.ChatGptException;
 import com.playdata.client.chatgpt.service.ChatGptService;
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
@@ -7,6 +8,7 @@ import com.playdata.kafka.dto.ArticleKafkaData;
 import com.playdata.kafka.dto.TaskKafkaData;
 import com.playdata.kafka.producer.StoryProducer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TaskService {
     private final ArticleIndexRepository articleIndexRepository;
     private final ChatGptService chatGptService;
@@ -40,7 +43,8 @@ public class TaskService {
     }
 
     @Recover
-    public void recover(RuntimeException e, ArticleKafkaData data){
+    public void recover(ChatGptException e, ArticleKafkaData data){
+        log.error("ChatGptException : {} Article ID : {}", e, data.id());
         storyProducer.send(data.id());
     }
 
