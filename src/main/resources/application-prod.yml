@@ -1,9 +1,9 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://10.128.0.12:27017/task
+      uri: mongodb://${DATABASE_URL}:${MONGO_PORT}/task
   kafka:
-    bootstrap-servers: 10.128.0.12:9092
+    bootstrap-servers: ${KAFKA_URL}:${KAFKA_PORT}
     consumer:
       auto-offset-reset: latest
       group-id: task
