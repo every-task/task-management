@@ -4,6 +4,8 @@ package com.playdata.client.chatgpt.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playdata.client.chatgpt.config.GptCompletion;
+import com.playdata.client.chatgpt.exception.ChatGptException;
+import com.playdata.client.chatgpt.exception.ChatGptExceptionType;
 import com.playdata.client.chatgpt.response.GptCompletionResponse;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.service.OpenAiService;
@@ -25,6 +27,7 @@ public class ChatGptServiceImpl implements ChatGptService {
         CompletableFuture<String> completion = CompletableFuture
                 .supplyAsync(() -> completion(content).trim());
         try {
+            // TODO : non block, async 로 변경 고민
             return extractWordsFromResponse(completion.get());
         } catch (InterruptedException | ExecutionException e) {
             // TODO : 예외처리 방식 변경
@@ -39,16 +42,14 @@ public class ChatGptServiceImpl implements ChatGptService {
         return response.getMessages().stream()
                 .map(GptCompletionResponse.Message::getMessage)
                 .findFirst()
-                // TODO : 커스텀 예외로 바꿔야 함
-                .orElseThrow(()->new RuntimeException("ChatGptCompletionException"));
+                .orElseThrow(() -> new ChatGptException(ChatGptExceptionType.CHAT_GPT_COMPLETION_FAIL));
     }
 
     private List<String> extractWordsFromResponse(String response) {
         try {
             return objectMapper.readValue(response, List.class);
         } catch (JsonProcessingException e) {
-            // TODO : 커스텀 예외로 바꿔야 함
-            throw new RuntimeException("CompletionResponseParseException", e);
+            throw new ChatGptException(ChatGptExceptionType.COMPLETION_RESPONSE_PARSE_FAIL, e);
         }
     }
 }
