@@ -1,11 +1,13 @@
 package com.playdata.task;
 
+import com.playdata.client.chatgpt.exception.ChatGptException;
+import com.playdata.client.chatgpt.exception.ChatGptExceptionType;
 import com.playdata.client.chatgpt.service.ChatGptService;
-import com.playdata.client.story.service.SuccessStoryClient;
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
 import com.playdata.kafka.dto.ArticleKafkaData;
 import com.playdata.kafka.dto.TaskKafkaData;
+import com.playdata.kafka.producer.StoryProducer;
 import com.playdata.task.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +25,7 @@ import static com.playdata.domain.task.entity.Period.ALWAYS;
 import static com.playdata.domain.task.entity.Period.DAILY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -34,6 +36,8 @@ class TaskServiceTest {
     private ChatGptService chatGptService;
     @Autowired
     private TaskService taskService;
+    @MockBean
+    private StoryProducer storyProducer;
 
     @BeforeEach
     public void clear() {
@@ -107,5 +111,25 @@ class TaskServiceTest {
 
         ArticleIndex index3 = articleIndexRepository.findById("법").get();
         assertThat(index3.getTasks()).hasSize(2);
+    }
+
+    @DisplayName("chat gpt 사용 실패 시, 실패 내역이 전송되어야 한다.")
+    @Test
+    void executeRecoverWhenFailChatGptCompletion(){
+        //given
+        ArticleKafkaData data = new ArticleKafkaData(
+                1L,
+                "살아가는 법",
+                "건강하게 삶을 사는 법.",
+                List.of());
+
+        when(chatGptService.parseContent(anyString()))
+                .thenThrow(new ChatGptException(ChatGptExceptionType.CHAT_GPT_COMPLETION_FAIL));
+
+        //when
+        taskService.taskRegister(data);
+
+        //then
+        verify(storyProducer).send(anyLong());
     }
 }
