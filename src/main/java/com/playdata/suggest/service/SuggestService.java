@@ -10,11 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +29,10 @@ public class SuggestService {
 
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskSuggest(Long questionId, String content){
-        List<String> words = chatGptService.parseContent(content);
-
-        List<UUID> relatedTaskIds = articleIndexService.getRelatedTaskIds(words, SUGGEST_TASK_COUNT);
-
-        suggestProducer.send(questionId, relatedTaskIds);
+        CompletableFuture<List<String>> parsedContent = chatGptService.parseContent(content);
+        parsedContent
+                .thenApply(words -> articleIndexService.getRelatedTaskIds(words, SUGGEST_TASK_COUNT))
+                .thenAccept(relatedTaskIds -> suggestProducer.send(questionId, relatedTaskIds));
     }
 
     @Recover
@@ -42,5 +40,4 @@ public class SuggestService {
         log.error("ChatGptException : {} Question ID : {}", e, questionId);
         questionProducer.send(questionId);
     }
-
 }

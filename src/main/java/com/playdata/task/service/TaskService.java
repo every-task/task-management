@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,21 +31,22 @@ public class TaskService {
 
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskRegister(ArticleKafkaData data){
-
         Set<UUID> taskIds = data.tasks().stream()
                 .map(TaskKafkaData::id)
                 .collect(Collectors.toSet());
 
-        List<String> words = chatGptService.parseContent(data.content());
+        CompletableFuture<List<String>> parsedContent = chatGptService.parseContent(data.content());
 
-        words.forEach(word->{
-            upsertTasks(word, taskIds);
-        });
+        parsedContent.thenAccept(words ->
+                words.forEach(word ->
+                        upsertTasks(word, taskIds)
+                )
+        );
     }
 
     @Recover
     public void recover(ChatGptException e, ArticleKafkaData data){
-        log.error("ChatGptException : {} Article ID : {}", e, data.id());
+        log.error("ChatGptException : {} Cause : {} Story ID : {}", e, e.getCause(), data.id());
         storyProducer.send(data.id());
     }
 

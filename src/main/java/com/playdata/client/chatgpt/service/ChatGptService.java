@@ -1,8 +1,9 @@
 package com.playdata.client.chatgpt.service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface ChatGptService {
 
-    List<String> parseContent(String content);
+    CompletableFuture<List<String>> parseContent(String content);
 }
