@@ -36,18 +36,26 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
     public String completion(String prompt) {
-        ChatCompletionResult result = openAiService.createChatCompletion(GptCompletion.fromPrompt(prompt));
+        try {
+            ChatCompletionResult result = openAiService.createChatCompletion(GptCompletion.fromPrompt(prompt));
+            return extractMessage(result);
+        } catch (OpenAiHttpException e){
+            throw new ChatGptException(ChatGptExceptionType.CHAT_GPT_COMPLETION_FAIL, e);
+        }
+    }
+
+    private String extractMessage(ChatCompletionResult result) {
         GptCompletionResponse response = GptCompletionResponse.of(result);
 
         return response.getMessages().stream()
                 .map(GptCompletionResponse.Message::getMessage)
                 .findFirst()
-                .orElseThrow(() -> new ChatGptException(ChatGptExceptionType.CHAT_GPT_COMPLETION_FAIL));
+                .orElseThrow(() -> new ChatGptException(ChatGptExceptionType.NO_RESPONSE));
     }
 
-    private List<String> extractWordsFromResponse(String response) {
+    private List<String> extractWords(String message){
         try {
-            return objectMapper.readValue(response, List.class);
+            return objectMapper.readValue(message.trim(), List.class);
         } catch (JsonProcessingException e) {
             throw new ChatGptException(ChatGptExceptionType.COMPLETION_RESPONSE_PARSE_FAIL, e);
         }
