@@ -46,7 +46,7 @@ public class TaskService {
 
     @Recover
     public void recover(ChatGptException e, ArticleKafkaData data){
-        log.error("ChatGptException : {} Cause : {} Story ID : {}", e, e.getCause(), data.id());
+        log.error("fail indexing story Story Id : {}", data.id(), e);
         storyProducer.send(data.id());
     }
 
