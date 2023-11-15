@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static com.playdata.domain.task.entity.Period.ALWAYS;
 import static com.playdata.domain.task.entity.Period.DAILY;
@@ -41,7 +42,6 @@ class TaskServiceTest {
 
     @BeforeEach
     public void clear() {
-        // 인메모리 몽고 DB가 초기화가 되지 않아서 임시방편..
         articleIndexRepository.deleteAll();
     }
 
@@ -58,8 +58,9 @@ class TaskServiceTest {
                 "건강하게 삶을 사는 법.",
                 List.of(task1, task2));
 
+
         when(chatGptService.parseContent(anyString()))
-                .thenReturn(List.of("건강", "삶", "법"));
+                .thenReturn(CompletableFuture.completedFuture(List.of("건강", "삶", "법")));
 
         //when
         taskService.taskRegister(articleKafkaData);
@@ -97,7 +98,8 @@ class TaskServiceTest {
                 List.of(task1, task2));
 
         when(chatGptService.parseContent(anyString()))
-                .thenReturn(List.of("건강", "삶", "법"));
+                .thenReturn(CompletableFuture.completedFuture(List.of("건강", "삶", "법")));
+
 
         //when
         taskService.taskRegister(articleKafkaData);
