@@ -1,5 +1,6 @@
 package com.playdata.kafka.consumer;
 
+import com.playdata.kafka.config.KafkaData;
 import com.playdata.kafka.config.TopicConfig;
 import com.playdata.kafka.dto.QuestionKafkaData;
 import com.playdata.suggest.service.SuggestService;
@@ -14,7 +15,8 @@ public class QuestionConsumer {
     private final SuggestService suggestService;
 
     @KafkaListener(topics = TopicConfig.QUESTION)
-    public void listen(QuestionKafkaData data){
-        suggestService.taskSuggest(data.id(), data.content());
+    public void listen(KafkaData<QuestionKafkaData> kafkaData){
+        QuestionKafkaData questionKafkaData = kafkaData.data();
+        suggestService.taskSuggest(questionKafkaData.id(), questionKafkaData.content());
     }
 }
