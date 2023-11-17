@@ -10,6 +10,7 @@ import com.theokanning.openai.OpenAiHttpException;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatGptServiceImpl implements ChatGptService {
     private final OpenAiService openAiService;
     private final ObjectMapper objectMapper;
@@ -26,7 +28,7 @@ public class ChatGptServiceImpl implements ChatGptService {
         return CompletableFuture.supplyAsync(() -> completion(content))
                 .thenApply(this::extractWords)
                 .exceptionally(e -> {
-                    //TODO : supplyAsync 로 생성된 스레드 예외전파 ? 관리 ? Retry 전략
+                    log.error("CHAT_GPT_COMPLETION_FAIL",  e);
                     throw new ChatGptException(ChatGptExceptionType.CHAT_GPT_COMPLETION_FAIL, e);
                 });
     }
