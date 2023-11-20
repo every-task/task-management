@@ -16,7 +16,6 @@ public class QuestionConsumer {
 
     @KafkaListener(topics = TopicConfig.QUESTION)
     public void listen(KafkaData<QuestionKafkaData> kafkaData){
-        QuestionKafkaData questionKafkaData = kafkaData.data();
-        suggestService.taskSuggest(questionKafkaData.id(), questionKafkaData.content());
+        suggestService.taskSuggest(kafkaData.data());
     }
 }

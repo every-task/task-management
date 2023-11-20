@@ -3,6 +3,7 @@ package com.playdata.suggest.service;
 import com.playdata.articleindex.service.ArticleIndexService;
 import com.playdata.client.chatgpt.exception.ChatGptException;
 import com.playdata.client.chatgpt.service.ChatGptService;
+import com.playdata.kafka.dto.QuestionKafkaData;
 import com.playdata.kafka.producer.QuestionProducer;
 import com.playdata.kafka.producer.SuggestProducer;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +29,11 @@ public class SuggestService {
     private final static int SUGGEST_TASK_COUNT = 5;
 
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
-    public void taskSuggest(Long questionId, String content){
-        CompletableFuture<List<String>> parsedContent = chatGptService.parseContent(content);
+    public void taskSuggest(QuestionKafkaData data){
+        CompletableFuture<List<String>> parsedContent = chatGptService.parseContent(data.content());
         parsedContent
-                .thenApply(words -> articleIndexService.getRelatedTaskIds(words, SUGGEST_TASK_COUNT))
-                .thenAccept(relatedTaskIds -> suggestProducer.send(questionId, relatedTaskIds));
+                .thenApply(words -> articleIndexService.getRelatedTaskIds(words, data.category(), SUGGEST_TASK_COUNT))
+                .thenAccept(relatedTaskIds -> suggestProducer.send(data.id(), relatedTaskIds));
     }
 
     @Recover
