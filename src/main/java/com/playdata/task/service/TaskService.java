@@ -4,6 +4,7 @@ import com.playdata.client.chatgpt.exception.ChatGptException;
 import com.playdata.client.chatgpt.service.ChatGptService;
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
+import com.playdata.domain.task.entity.ArticleCategory;
 import com.playdata.kafka.dto.ArticleKafkaData;
 import com.playdata.kafka.dto.TaskKafkaData;
 import com.playdata.kafka.producer.StoryProducer;
@@ -39,7 +40,7 @@ public class TaskService {
 
         parsedContent.thenAccept(words ->
                 words.forEach(word ->
-                        upsertTasks(word, taskIds)
+                        upsertTasks(word, data.category(), taskIds)
                 )
         );
     }
@@ -50,11 +51,11 @@ public class TaskService {
         storyProducer.send(data.id());
     }
 
-    public void upsertTasks(String word, Set<UUID> taskIds) {
-        Optional<ArticleIndex> articleIndex = articleIndexRepository.findById(word);
+    public void upsertTasks(String word, ArticleCategory category, Set<UUID> taskIds) {
+        Optional<ArticleIndex> articleIndex = articleIndexRepository.findByWordAndCategory(word, category);
 
         if(articleIndex.isEmpty()){
-            articleIndexRepository.save(ArticleIndex.createArticleIndex(word, taskIds));
+            articleIndexRepository.save(ArticleIndex.createArticleIndex(word, category, taskIds));
         } else {
             ArticleIndex findArticleIndex = articleIndex.get();
             findArticleIndex.getTasks().addAll(taskIds);

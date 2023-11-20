@@ -1,5 +1,6 @@
 package com.playdata.domain.articleindex.entity;
 
+import com.playdata.domain.task.entity.ArticleCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,18 +17,21 @@ public class ArticleIndex {
 
     @Id
     private String word;
+    private ArticleCategory category;
     private Set<UUID> tasks;
 
-    public static ArticleIndex createArticleIndex(String word, Set<UUID> tasks) {
+    public static ArticleIndex createArticleIndex(String word, ArticleCategory category, Set<UUID> tasks) {
         return ArticleIndex.builder()
                 .word(word)
+                .category(category)
                 .tasks(tasks)
                 .build();
     }
 
     @Builder
-    public ArticleIndex(String word, Set<UUID> tasks) {
+    public ArticleIndex(String word, ArticleCategory category, Set<UUID> tasks) {
         this.word = word;
+        this.category = category;
         this.tasks = tasks;
     }
 }
