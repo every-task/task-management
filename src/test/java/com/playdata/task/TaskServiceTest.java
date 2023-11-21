@@ -5,11 +5,12 @@ import com.playdata.client.chatgpt.exception.ChatGptExceptionType;
 import com.playdata.client.chatgpt.service.ChatGptService;
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
+import com.playdata.domain.task.entity.ArticleCategory;
 import com.playdata.kafka.dto.ArticleKafkaData;
 import com.playdata.kafka.dto.TaskKafkaData;
 import com.playdata.kafka.producer.StoryProducer;
 import com.playdata.task.service.TaskService;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ class TaskServiceTest {
     @MockBean
     private StoryProducer storyProducer;
 
-    @BeforeEach
+    @AfterEach
     public void clear() {
         articleIndexRepository.deleteAll();
     }
@@ -52,11 +53,13 @@ class TaskServiceTest {
         TaskKafkaData task1 = new TaskKafkaData(UUID.randomUUID(), ALWAYS, "운동을 하세요");
         TaskKafkaData task2 = new TaskKafkaData(UUID.randomUUID(), DAILY, "잠을 자세요");
 
-        ArticleKafkaData articleKafkaData = new ArticleKafkaData(
-                1L,
-                "살아가는 법",
-                "건강하게 삶을 사는 법.",
-                List.of(task1, task2));
+        ArticleKafkaData articleKafkaData = ArticleKafkaData.builder()
+                .id(1L)
+                .title("살아가는 법")
+                .content("건강하게 삶을 사는 법.")
+                .category(ArticleCategory.HEALTH)
+                .tasks(List.of(task1, task2))
+                .build();
 
 
         when(chatGptService.parseContent(anyString()))
@@ -84,6 +87,7 @@ class TaskServiceTest {
         ArticleIndex articleIndex = ArticleIndex.builder()
                 .word("건강")
                 .tasks(Set.of(UUID.randomUUID(), UUID.randomUUID()))
+                .category(ArticleCategory.HEALTH)
                 .build();
 
         articleIndexRepository.save(articleIndex);
@@ -91,11 +95,13 @@ class TaskServiceTest {
         TaskKafkaData task1 = new TaskKafkaData(UUID.randomUUID(), ALWAYS, "운동을 하세요");
         TaskKafkaData task2 = new TaskKafkaData(UUID.randomUUID(), DAILY, "잠을 자세요");
 
-        ArticleKafkaData articleKafkaData = new ArticleKafkaData(
-                1L,
-                "살아가는 법",
-                "건강하게 삶을 사는 법.",
-                List.of(task1, task2));
+        ArticleKafkaData articleKafkaData = ArticleKafkaData.builder()
+                .id(1L)
+                .title("살아가는 법")
+                .content("건강하게 삶을 사는 법.")
+                .category(ArticleCategory.HEALTH)
+                .tasks(List.of(task1, task2))
+                .build();
 
         when(chatGptService.parseContent(anyString()))
                 .thenReturn(CompletableFuture.completedFuture(List.of("건강", "삶", "법")));
@@ -105,13 +111,13 @@ class TaskServiceTest {
         taskService.taskRegister(articleKafkaData);
 
         //then
-        ArticleIndex index1 = articleIndexRepository.findById("건강").get();
+        ArticleIndex index1 = articleIndexRepository.findByWordAndCategory("건강", ArticleCategory.HEALTH).get();
         assertThat(index1.getTasks()).hasSize(4);
 
-        ArticleIndex index2 = articleIndexRepository.findById("삶").get();
+        ArticleIndex index2 = articleIndexRepository.findByWordAndCategory("삶", ArticleCategory.HEALTH).get();
         assertThat(index2.getTasks()).hasSize(2);
 
-        ArticleIndex index3 = articleIndexRepository.findById("법").get();
+        ArticleIndex index3 = articleIndexRepository.findByWordAndCategory("법", ArticleCategory.HEALTH).get();
         assertThat(index3.getTasks()).hasSize(2);
     }
 }

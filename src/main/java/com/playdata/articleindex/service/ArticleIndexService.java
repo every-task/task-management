@@ -2,6 +2,7 @@ package com.playdata.articleindex.service;
 
 import com.playdata.domain.articleindex.entity.ArticleIndex;
 import com.playdata.domain.articleindex.repository.ArticleIndexRepository;
+import com.playdata.domain.task.entity.ArticleCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,8 @@ public class ArticleIndexService {
 
     private final ArticleIndexRepository articleIndexRepository;
 
-    public List<UUID> getRelatedTaskIds(List<String> words, int count){
-        List<ArticleIndex> articleIndices = articleIndexRepository.findByWordIn(words);
+    public List<UUID> getRelatedTaskIds(List<String> words, ArticleCategory category, int count){
+        List<ArticleIndex> articleIndices = articleIndexRepository.findByWordInAndCategory(words, category);
 
         List<UUID> taskIds = articleIndices.stream()
                 .map(ArticleIndex::getTasks)
