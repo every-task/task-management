@@ -9,9 +9,6 @@ import com.playdata.kafka.dto.TaskKafkaData;
 import com.playdata.kafka.producer.StoryProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +26,7 @@ public class TaskService {
     private final ChatGptService chatGptService;
     private final StoryProducer storyProducer;
 
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
+//    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskRegister(ArticleKafkaData data){
         Set<UUID> taskIds = data.tasks().stream()
                 .map(TaskKafkaData::id)
@@ -41,10 +38,13 @@ public class TaskService {
                 words.forEach(word ->
                         upsertTasks(word, taskIds)
                 )
-        );
+        ).exceptionally(e -> {
+            recover(new ChatGptException(e), data);
+            return null;
+        });
     }
 
-    @Recover
+//    @Recover
     public void recover(ChatGptException e, ArticleKafkaData data){
         log.error("fail indexing story Story Id : {}", data.id(), e);
         storyProducer.send(data.id());

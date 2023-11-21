@@ -28,8 +28,7 @@ public class ChatGptServiceImpl implements ChatGptService {
         return CompletableFuture.supplyAsync(() -> completion(content))
                 .thenApply(this::extractWords)
                 .exceptionally(e -> {
-                    log.error("CHAT_GPT_COMPLETION_FAIL",  e);
-                    throw new ChatGptException(ChatGptExceptionType.CHAT_GPT_COMPLETION_FAIL, e);
+                    throw new ChatGptException(e);
                 });
     }
 
