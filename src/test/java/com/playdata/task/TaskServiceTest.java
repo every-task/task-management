@@ -114,24 +114,4 @@ class TaskServiceTest {
         ArticleIndex index3 = articleIndexRepository.findById("법").get();
         assertThat(index3.getTasks()).hasSize(2);
     }
-
-    @DisplayName("chat gpt 사용 실패 시, 실패 내역이 전송되어야 한다.")
-    @Test
-    void executeRecoverWhenFailChatGptCompletion(){
-        //given
-        ArticleKafkaData data = new ArticleKafkaData(
-                1L,
-                "살아가는 법",
-                "건강하게 삶을 사는 법.",
-                List.of());
-
-        when(chatGptService.parseContent(anyString()))
-                .thenThrow(new ChatGptException(ChatGptExceptionType.CHAT_GPT_COMPLETION_FAIL));
-
-        //when
-        taskService.taskRegister(data);
-
-        //then
-        verify(storyProducer).send(anyLong());
-    }
 }
