@@ -1,4 +1,11 @@
 package com.playdata.kafka.dto;
 
-public record QuestionKafkaData(Long id, String title, String content) {
+import com.playdata.domain.task.entity.ArticleCategory;
+
+public record QuestionKafkaData(
+        Long id,
+        String title,
+        String content,
+        ArticleCategory category
+) {
 }
