@@ -26,10 +26,7 @@ public class ChatGptServiceImpl implements ChatGptService {
     @Override
     public CompletableFuture<List<String>> parseContent(String content) {
         return CompletableFuture.supplyAsync(() -> completion(content))
-                .thenApply(this::extractWords)
-                .exceptionally(e -> {
-                    throw new ChatGptException(e);
-                });
+                .thenApply(this::extractWords);
     }
 
     public String completion(String prompt) {
