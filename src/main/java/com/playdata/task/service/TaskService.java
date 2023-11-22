@@ -27,7 +27,6 @@ public class TaskService {
     private final ChatGptService chatGptService;
     private final StoryProducer storyProducer;
 
-//    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000L))
     public void taskRegister(ArticleKafkaData data){
         Set<UUID> taskIds = data.tasks().stream()
                 .map(TaskKafkaData::id)
@@ -45,7 +44,6 @@ public class TaskService {
         });
     }
 
-//    @Recover
     public void recover(ChatGptException e, ArticleKafkaData data){
         log.error("fail indexing story Story Id : {}", data.id(), e);
         storyProducer.send(data.id());
