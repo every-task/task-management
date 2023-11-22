@@ -15,4 +15,9 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 chatgpt:
-  api-key: ss-sssssssssssssssssssssssssssssssssssssssss
+  api-key: sk-local
+
+logging:
+  slack:
+    webhook-uri: https://hooks.slack.com/services/local/local/local
+  config: classpath:logback-spring.xml
