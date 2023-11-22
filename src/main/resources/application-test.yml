@@ -5,3 +5,7 @@ de:
         version: 5.0.5
 chatgpt:
   api-key: aa-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+logging:
+  slack:
+    webhook-uri: https://hooks.slack.com/services/test/test/test
+  config: classpath:logback-spring.xml

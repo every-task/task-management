@@ -21,10 +21,6 @@ repositories {
 }
 
 dependencies {
-    //chatGPT 직접 적어줘야 한다
-    implementation 'com.theokanning.openai-gpt3-java:service:0.16.1'
-    implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
-
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
@@ -38,6 +34,13 @@ dependencies {
 
     // kafka
     implementation 'org.springframework.kafka:spring-kafka'
+
+    // chat gpt
+    implementation 'com.theokanning.openai-gpt3-java:service:0.16.1'
+    implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
+
+    // notification
+    implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'

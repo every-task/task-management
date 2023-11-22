@@ -17,3 +17,8 @@ spring:
 chatgpt:
   api-key: ${CHATGPT_API_KEY}
 
+logging:
+  slack:
+    webhook-uri: ${SLACK_WEBHOOK_URI}
+  config: classpath:logback-spring.xml
+
